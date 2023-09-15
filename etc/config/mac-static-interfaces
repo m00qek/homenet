@@ -1,0 +1,4 @@
+config mac-static-interfaces
+	option eth_wan "08:00:27:af:ae:d7"
+	option eth_lan "08:00:27:1f:cc:35"
+	option eth_vmhost "08:00:27:5e:e3:33"
