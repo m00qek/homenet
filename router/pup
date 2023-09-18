@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+shopt -s globstar
+server="$(jq '.server.user' -r secrets.json)@$(jq '.server.address' -r secrets.json)"
+
+case "$1" in
+
+sync)
+	path="${2}"
+	tmp="$(mktemp -d)"
+	cp -r ${path}* "$tmp"
+
+	for f in $(find "$tmp" -type f); do
+		for r in $(cat secrets.json | jq '.replace | to_entries[]' -c); do
+			replaceEscaped=$(sed 's/[&/\]/\\&/g' <<<"$(jq .value -r <<<"$r")")
+			sed -i "s/{{$(jq .key -r <<<"$r")}}/$replaceEscaped/g" "$f"
+		done
+	done
+
+	trap "rm -rf $tmp" EXIT
+
+	scp -Or ${tmp}/* "${server}:/$(dirname "$path")"
+	ssh "$server" "/etc/init.d/$(basename "$path") restart"
+	;;
+
+shell)
+	ssh "$server"
+	;;
+
+run)
+	ssh "$server" "${@:2}"
+	;;
+esac
