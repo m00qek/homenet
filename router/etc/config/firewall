@@ -1,0 +1,71 @@
+
+config defaults
+	option input 'ACCEPT'
+	option output 'ACCEPT'
+	option forward 'REJECT'
+	option synflood_protect '1'
+
+config zone
+	option name 'guest'
+	option output 'ACCEPT'
+	option forward 'ACCEPT'
+	option input 'ACCEPT'
+	list network 'guest'
+
+config zone
+	option name 'main'
+	option input 'ACCEPT'
+	option output 'ACCEPT'
+	option forward 'ACCEPT'
+	list network 'main'
+
+config forwarding
+	option src 'guest'
+	option dest 'wan'
+
+config forwarding
+	option src 'main'
+	option dest 'wan'
+
+config forwarding
+	option src 'iot'
+	option dest 'wan'
+
+config zone
+	option name 'iot'
+	option output 'ACCEPT'
+	option forward 'ACCEPT'
+	option input 'ACCEPT'
+	list network 'iot'
+
+config zone
+	option name 'wan'
+	option input 'REJECT'
+	option output 'ACCEPT'
+	option forward 'REJECT'
+	option masq '1'
+	option mtu_fix '1'
+	list network 'wan'
+
+config rule
+	option name 'Allow-DHCP-Renew'
+	option src 'wan'
+	option proto 'udp'
+	option dest_port '68'
+	option target 'ACCEPT'
+	option family 'ipv4'
+
+config rule
+	option name 'Allow-Ping'
+	option src 'wan'
+	option proto 'icmp'
+	option icmp_type 'echo-request'
+	option family 'ipv4'
+	option target 'ACCEPT'
+
+config rule
+	option name 'Allow-IGMP'
+	option src 'wan'
+	option proto 'igmp'
+	option family 'ipv4'
+	option target 'ACCEPT'
