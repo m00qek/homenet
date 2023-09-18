@@ -1,0 +1,6 @@
+[NetDev]
+Name=guest
+Kind=vlan
+
+[VLAN]
+Id=11

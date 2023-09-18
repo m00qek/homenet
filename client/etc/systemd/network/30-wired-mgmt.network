@@ -1,0 +1,6 @@
+[Match]
+Name=enp0s8
+
+[Network]
+DHCP=ipv4
+LinkLocalAddressing=ipv4
