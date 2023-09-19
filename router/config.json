@@ -1,7 +1,8 @@
 {
   "services": {
     "dhcp": [
-      "odhcp"
+      "odhcpd",
+      "dnsmasq"
     ]
   }
 }

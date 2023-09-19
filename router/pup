@@ -50,7 +50,7 @@ sync)
 			<config.json)"
 
 		for service in $services; do
-			echo ssh "$server" "/etc/init.d/${service} restart"
+			ssh "$server" "/etc/init.d/${service} restart"
 		done
 	done
 	;;
@@ -77,7 +77,7 @@ copy)
 			cat "$bundle_file"
 			echo
 		else
-			echo scp -O "$bundle_file" "${server}:/${config_path}"
+			scp -O "$bundle_file" "${server}:/${config_path}"
 			trap "rm -rf $bundle_file" EXIT
 		fi
 	done
