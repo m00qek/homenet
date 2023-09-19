@@ -125,6 +125,16 @@ show)
 run)
 	with-dry-run ssh "$SERVER" "${args[@]:2}"
 	;;
+*)
+	cat <<EOF
+Simple router manager.
+
+Usage:
+  ./pup [--dry-run] ( show | copy | sync ) <file>...
+  ./pup run <command>
+  ./pup shell
+EOF
+	;;
 esac
 
 if ! $DRY_RUN; then
