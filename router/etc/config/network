@@ -69,3 +69,18 @@ config interface 'main'
 	option ip6assign '60'
 	option ip6hint '20'
 	list ipaddr '10.0.17.1/24'
+
+config interface 'vpn'
+  option proto 'wireguard'
+  option private_key '{{WIREGUARD_PRIVATE_KEY}}'
+  list addresses '{{WIREGUARD_ADDRESS}}'
+  option mtu '1412'
+
+config wireguard_vpn
+  option description 'ivpn-poland'
+  option public_key '{{WIREGUARD_PUBLIC_KEY}}'
+  option endpoint_host '{{WIREGUARD_SERVER}}'
+  option endpoint_port '{{WIREGUARD_PORT}}'
+  list allowed_ips '0.0.0.0/0'
+  option route_allowed_ips '1'
+  option persistent_keepalive '25'

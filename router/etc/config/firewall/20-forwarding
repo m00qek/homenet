@@ -1,0 +1,11 @@
+config forwarding
+	option src 'guest'
+	option dest 'wan'
+
+config forwarding
+	option src 'main'
+	option dest 'wan'
+
+config forwarding
+	option src 'iot'
+	option dest 'wan'

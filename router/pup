@@ -2,28 +2,57 @@
 shopt -s globstar
 server="$(jq '.server.user' -r secrets.json)@$(jq '.server.address' -r secrets.json)"
 
+function bundle() {
+	local config_path="$1"
+
+	local tmp="$(mktemp -d)"
+
+	bundle_file="${tmp}/$(basename "$config_path").bundle"
+
+	if [ -f "$config_path" ]; then
+		cp "${config_path}" "$bundle_file"
+	elif [ -d "$config_path" ]; then
+		touch "$bundle_file"
+		for f in $(find "$config_path" -type f | sort --numeric-sort); do
+			echo >>"$bundle_file"
+			cat "$f" >>"$bundle_file"
+		done
+	fi
+
+	for r in $(jq '.replace | to_entries[]' -c <secrets.json); do
+		replaceEscaped=$(sed 's/[&/\]/\\&/g' <<<"$(jq .value -r <<<"$r")")
+		sed -i "s/{{$(jq .key -r <<<"$r")}}/$replaceEscaped/g" "$bundle_file"
+	done
+
+	echo "$bundle_file"
+}
+
 case "$1" in
 
 sync)
-	path="${2}"
-	tmp="$(mktemp -d)"
-	cp -r ${path}* "$tmp"
+	file_path="${2}"
+	./pup copy "$file_path"
 
-	for f in $(find "$tmp" -type f); do
-		for r in $(cat secrets.json | jq '.replace | to_entries[]' -c); do
-			replaceEscaped=$(sed 's/[&/\]/\\&/g' <<<"$(jq .value -r <<<"$r")")
-			sed -i "s/{{$(jq .key -r <<<"$r")}}/$replaceEscaped/g" "$f"
-		done
+	services="$(jq '.services | .[ $service ] // [ $service ] | .[]' \
+		--arg service "$(basename "$file_path")" \
+		--raw-output \
+		<config.json)"
+
+	for service in $services; do
+		echo ssh "$server" "/etc/init.d/${service} restart"
 	done
-
-	trap "rm -rf $tmp" EXIT
-
-	scp -Or ${tmp}/* "${server}:/$(dirname "$path")"
-	ssh "$server" "/etc/init.d/$(basename "$path") restart"
 	;;
 
 shell)
 	ssh "$server"
+	;;
+
+copy)
+	config_path="${2}"
+
+	bundle_file="$(bundle "$config_path")"
+	echo scp -O "$bundle_file" "${server}:/${config_path}"
+	trap 'echo rm -rf $bundle_file' EXIT
 	;;
 
 run)
