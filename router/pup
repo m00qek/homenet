@@ -1,13 +1,21 @@
 #!/usr/bin/env bash
 shopt -s globstar
-server="$(jq '.server.user' -r secrets.json)@$(jq '.server.address' -r secrets.json)"
+
+SERVER="$(jq '.server.user' -r secrets.json)@$(jq '.server.address' -r secrets.json)"
+TMP_DIR="$(mktemp -d)"
+DRY_RUN=false
+
+with-dry-run() {
+	if $DRY_RUN; then
+		echo ${@:1}
+	else
+		${@:1}
+	fi
+}
 
 function bundle() {
 	local config_path="$1"
-
-	local tmp="$(mktemp -d)"
-
-	bundle_file="${tmp}/$(basename "$config_path").bundle"
+	bundle_file="${TMP_DIR}/$(basename "$config_path").bundle"
 
 	if [ -f "$config_path" ]; then
 		cp "${config_path}" "$bundle_file"
@@ -35,55 +43,90 @@ function bundle() {
 	echo "$bundle_file"
 }
 
-case "$1" in
+function config-to-services() {
+	local configs=${@:1}
 
-sync)
-	declare -a paths
-	paths="${@:2}"
-
-	./pup copy $paths
-
-	for file_path in $paths; do
-		services="$(jq '.services | .[ $service ] // [ $service ] | .[]' \
-			--arg service "$(basename "$file_path")" \
+	for c in $configs; do
+		raw_services=$(jq '.services | .[ $service ] // [ $service ] | .[]' \
+			--arg service "$(basename "$c")" \
 			--raw-output \
-			<config.json)"
+			<config.json)
 
-		for service in $services; do
-			ssh "$server" "/etc/init.d/${service} restart"
+		for s in $raw_services; do
+			echo "$s"
 		done
+	done
+}
+
+function order-configs() {
+	local configs=${@:1}
+
+	deps=$(jq '.dependencies | to_entries[] | .key as $k | .value[] | . + " " + $k' \
+		--raw-output \
+		<config.json)
+
+	for s in etc/config/*; do
+		s=$(basename "$s")
+		deps+=$(echo -e "\n$s $s")
+	done
+
+	for s in $(tsort <<<"$deps"); do
+		for cs in $configs; do
+			if [[ "$s" == "$(basename "$cs")" ]]; then
+				echo "$cs"
+			fi
+		done
+	done
+}
+
+args=(${@:1})
+if [[ "${args[0]}" == "--dry-run" ]]; then
+	DRY_RUN=true
+	args=(${@:2})
+fi
+
+case "${args[0]}" in
+sync)
+	paths="${args[@]:1}"
+
+	if $DRY_RUN; then
+		./pup --dry-run copy $paths
+	else
+		./pup copy $paths
+	fi
+
+	services=$(config-to-services $(order-configs "$paths"))
+	for service in $services; do
+		with-dry-run ssh "$SERVER" "/etc/init.d/${service} restart"
 	done
 	;;
 
 shell)
-	ssh "$server"
+	with-dry-run ssh "$SERVER"
 	;;
 
 copy)
-	declare -a paths
-	paths="${@:2}"
-
-	dry_run=false
-	if [[ "$2" == "--dry-run" ]]; then
-		paths=${@:3}
-		dry_run=true
-	fi
+	paths="${args[@]:1}"
 
 	for config_path in $paths; do
 		bundle_file="$(bundle "$config_path")"
+		with-dry-run scp -O "$bundle_file" "${SERVER}:/${config_path}"
+	done
+	;;
 
-		if $dry_run; then
-			echo scp -O "$bundle_file" "${server}:/${config_path}"
-			cat "$bundle_file"
-			echo
-		else
-			scp -O "$bundle_file" "${server}:/${config_path}"
-			trap "rm -rf $bundle_file" EXIT
-		fi
+show)
+	paths="${args[@]:1}"
+
+	for config_path in $paths; do
+		cat "$(bundle "$config_path")"
 	done
 	;;
 
 run)
-	ssh "$server" "${@:2}"
+	with-dry-run ssh "$SERVER" "${args[@]:2}"
 	;;
 esac
+
+if ! $DRY_RUN; then
+	trap 'rm -rf $TMP_DIR' EXIT
+fi

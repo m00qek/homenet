@@ -4,5 +4,16 @@
       "odhcpd",
       "dnsmasq"
     ]
+  },
+  "dependencies": {
+    "network": [
+      "device-names"
+    ],
+    "firewall": [
+      "network"
+    ],
+    "dhcp": [
+      "network"
+    ]
   }
 }
