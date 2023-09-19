@@ -13,8 +13,16 @@ function bundle() {
 		cp "${config_path}" "$bundle_file"
 	elif [ -d "$config_path" ]; then
 		touch "$bundle_file"
+
 		for f in $(find "$config_path" -type f | sort --numeric-sort); do
-			echo >>"$bundle_file"
+			{
+				echo
+				echo "#==============================================================================="
+				echo "#         Generated from ${config_path}/$(basename "$f")"
+				echo "#==============================================================================="
+				echo
+			} >>"$bundle_file"
+
 			cat "$f" >>"$bundle_file"
 		done
 	fi
@@ -30,16 +38,20 @@ function bundle() {
 case "$1" in
 
 sync)
-	file_path="${2}"
-	./pup copy "$file_path"
+	declare -a paths
+	paths="${@:2}"
 
-	services="$(jq '.services | .[ $service ] // [ $service ] | .[]' \
-		--arg service "$(basename "$file_path")" \
-		--raw-output \
-		<config.json)"
+	./pup copy $paths
 
-	for service in $services; do
-		echo ssh "$server" "/etc/init.d/${service} restart"
+	for file_path in $paths; do
+		services="$(jq '.services | .[ $service ] // [ $service ] | .[]' \
+			--arg service "$(basename "$file_path")" \
+			--raw-output \
+			<config.json)"
+
+		for service in $services; do
+			echo ssh "$server" "/etc/init.d/${service} restart"
+		done
 	done
 	;;
 
@@ -48,11 +60,27 @@ shell)
 	;;
 
 copy)
-	config_path="${2}"
+	declare -a paths
+	paths="${@:2}"
 
-	bundle_file="$(bundle "$config_path")"
-	echo scp -O "$bundle_file" "${server}:/${config_path}"
-	trap 'echo rm -rf $bundle_file' EXIT
+	dry_run=false
+	if [[ "$2" == "--dry-run" ]]; then
+		paths=${@:3}
+		dry_run=true
+	fi
+
+	for config_path in $paths; do
+		bundle_file="$(bundle "$config_path")"
+
+		if $dry_run; then
+			echo scp -O "$bundle_file" "${server}:/${config_path}"
+			cat "$bundle_file"
+			echo
+		else
+			echo scp -O "$bundle_file" "${server}:/${config_path}"
+			trap "rm -rf $bundle_file" EXIT
+		fi
+	done
 	;;
 
 run)

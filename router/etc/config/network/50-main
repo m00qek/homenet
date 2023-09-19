@@ -1,0 +1,13 @@
+config device
+	option name 'vlan-main'
+	option type '8021q'
+	option ifname 'eth-lan'
+	option vid '17'
+	option ipv6 '0'
+
+config interface 'main'
+	option device 'vlan-main'
+	option proto 'static'
+	option ip6assign '60'
+	option ip6hint '20'
+	list ipaddr '10.0.17.1/24'

@@ -1,0 +1,13 @@
+config device
+	option name 'vlan-guest'
+	option type '8021q'
+	option ifname 'eth-lan'
+	option vid '11'
+	option ipv6 '0'
+
+config interface 'guest'
+	option device 'vlan-guest'
+	option proto 'static'
+	option ip6assign '60'
+	option ip6hint '20'
+	list ipaddr '10.0.11.1/24'

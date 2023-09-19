@@ -1,0 +1,7 @@
+config device
+	option name 'eth-wan'
+	option ipv6 '0'
+
+config interface 'wan'
+	option device 'eth-wan'
+	option proto 'dhcp'

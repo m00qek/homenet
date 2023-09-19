@@ -1,0 +1,2 @@
+config globals 'globals'
+	option ula_prefix 'fded:b627:d971::/48'

@@ -1,0 +1,13 @@
+config device
+	option name 'vlan-iot'
+	option type '8021q'
+	option ifname 'eth-lan'
+	option vid '13'
+	option ipv6 '0'
+
+config interface 'iot'
+	option device 'vlan-iot'
+	option proto 'static'
+	option ip6assign '60'
+	option ip6hint '20'
+	list ipaddr '10.0.13.1/24'

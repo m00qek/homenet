@@ -1,0 +1,3 @@
+config device
+	option name 'eth-lan'
+	option ipv6 '0'
