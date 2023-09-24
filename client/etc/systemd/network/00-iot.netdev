@@ -1,6 +1,0 @@
-[NetDev]
-Name=iot
-Kind=vlan
-
-[VLAN]
-Id=13

@@ -1,7 +1,0 @@
-[Match]
-Name=guest
-Type=vlan
-
-[Network]
-DHCP=yes
-LinkLocalAddressing=ipv4
