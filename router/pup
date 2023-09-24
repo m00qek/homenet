@@ -123,7 +123,7 @@ show)
 	;;
 
 run)
-	with-dry-run ssh "$SERVER" "${args[@]:2}"
+	with-dry-run ssh "$SERVER" "${args[@]:1}"
 	;;
 *)
 	cat <<EOF

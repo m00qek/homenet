@@ -1,6 +1,6 @@
 config forwarding
 	option src 'guest'
-	option dest 'wan'
+	option dest 'vpn'
 
 config forwarding
 	option src 'main'

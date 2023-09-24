@@ -1,0 +1,14 @@
+config interface 'vpn'
+	option proto 'wireguard'
+	option private_key '{{WIREGUARD_CLIENT_PRIVATE_KEY}}'
+	list addresses '{{WIREGUARD_CLIENT_ADDRESS}}'
+	option mtu '1412'
+
+config wireguard_vpn
+	option description 'ivpn-poland'
+	option public_key '{{WIREGUARD_SERVER_PUBLIC_KEY}}'
+	option endpoint_host '{{WIREGUARD_SERVER_ADDRESS}}'
+	option endpoint_port '{{WIREGUARD_SERVER_PORT}}'
+	list allowed_ips '0.0.0.0/0'
+	option route_allowed_ips '0'
+	option persistent_keepalive '25'

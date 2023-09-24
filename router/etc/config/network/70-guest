@@ -11,3 +11,15 @@ config interface 'guest'
 	option ip6assign '60'
 	option ip6hint '20'
 	list ipaddr '10.0.11.1/24'
+
+config rule
+        option in 'guest'
+        option src '10.0.11.0/24'
+        option lookup '100'
+
+config route
+        option interface 'vpn'
+        option target '0.0.0.0'
+        option netmask '0.0.0.0'
+        option metric '200'
+        option table '100'
