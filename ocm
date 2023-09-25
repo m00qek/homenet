@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail
 shopt -s globstar
 
 SERVER="$(jq '.router.server.user' -r secrets.json)@$(jq '.router.server.address' -r secrets.json)"
@@ -90,14 +91,16 @@ sync)
 	paths="${args[@]:1}"
 
 	if $DRY_RUN; then
-		./pup --dry-run copy $paths
+		./ocm --dry-run copy $paths
 	else
-		./pup copy $paths
+		./ocm copy $paths
 	fi
 
 	services=$(config-to-services $(order-configs "$paths"))
 	for service in $services; do
-		with-dry-run ssh "$SERVER" "/etc/init.d/${service} restart"
+		command="/etc/init.d/${service} restart"
+		echo "Running '${command}' ..."
+		with-dry-run ssh "$SERVER" "$command"
 	done
 	;;
 
@@ -127,12 +130,12 @@ run)
 	;;
 *)
 	cat <<EOF
-Simple router manager.
+OpenWRT configuration manager.
 
 Usage:
-  ./pup [--dry-run] ( show | copy | sync ) <file>...
-  ./pup run <command>
-  ./pup shell
+  ./ocm [--dry-run] ( show | copy | sync ) <file>...
+  ./ocm run <command>
+  ./ocm shell
 EOF
 	;;
 esac
