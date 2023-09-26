@@ -1,7 +1,18 @@
 config device
-	option name 'eth-wan'
-	option ipv6 '0'
+	option name 'vlan-wan'
+	option type '8021q'
+	option ifname 'eth-wan'
+	option vid '7'
+	option ipv6 '1'
 
 config interface 'wan'
-	option device 'eth-wan'
+	option device 'vlan-wan'
 	option proto 'dhcp'
+
+# PPPoE over vlan 
+
+# config interface 'wan'
+# 	option device 'vlan-wan'
+# 	option proto 'pppoe'
+# 	option username '{{WAN_PPPOE_USER}}'
+# 	option password '{{WAN_PPPOE_PASSWORD}}'

@@ -16,7 +16,7 @@ with-dry-run() {
 
 function bundle() {
 	local config_path="$1"
-	bundle_file="${TMP_DIR}/$(basename "$config_path").bundle"
+	bundle_file="${TMP_DIR}/$(basename "$config_path")"
 
 	if [ -f "$config_path" ]; then
 		cp "${config_path}" "$bundle_file"

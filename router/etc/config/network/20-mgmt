@@ -4,4 +4,6 @@ config device
 
 config interface 'mgmt'
 	option device 'eth-mgmt'
-	option proto 'dhcp'
+	option proto 'static'
+	option ipaddr '192.168.56.105'
+	option netmask '255.255.255.0'

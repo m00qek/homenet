@@ -3,9 +3,21 @@ config forwarding
 	option dest 'vpn'
 
 config forwarding
+	option src 'iot'
+	option dest 'wan'
+
+config forwarding
 	option src 'main'
 	option dest 'wan'
 
 config forwarding
-	option src 'iot'
-	option dest 'wan'
+	option src 'main'
+	option dest 'guest'
+
+config forwarding
+	option src 'main'
+	option dest 'iot'
+
+config forwarding
+	option src 'guest'
+	option dest 'iot'
