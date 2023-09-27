@@ -1,0 +1,82 @@
+hosts:
+  router:
+    source: ../router/
+    server:
+      addr: 192.168.56.105
+    params:
+      pppoe:
+        username: john@doe.com
+        password: 123abc
+
+  isp:
+    source: ./isp/
+    server:
+      addr: 192.168.56.101
+      user: root
+    params:
+      vlan: 7
+      dns:
+        server-1: 1.1.1.1
+      pppoe:
+        username: john@doe.com
+        password: 123abc
+
+  client-guest-1:
+    source: ./client/
+    server:
+      addr: 192.168.56.111
+      user: root
+    params:
+      subnet:
+        name: guest
+        vlan: 11
+
+  client-guest-2:
+    source: ./client/
+    server:
+      addr: 192.168.56.112
+      user: root
+    params:
+      subnet:
+        name: guest
+        vlan: 11
+
+  client-iot-1:
+    source: ./client/
+    server:
+      addr: 192.168.56.131
+      user: root
+    params:
+      subnet:
+        name: iot
+        vlan: 13
+
+  client-iot-2:
+    source: ./client/
+    server:
+      addr: 192.168.56.132
+      user: root
+    params:
+      subnet:
+        name: iot
+        vlan: 13
+
+  client-main-1:
+    source: ./client/
+    server:
+      addr: 192.168.56.171
+      user: root
+    params:
+      subnet:
+        name: main
+        vlan: 17
+
+  client-main-2:
+    source: ./client/
+    server:
+      addr: 192.168.56.172
+      user: root
+    params:
+      subnet:
+        name: main
+        vlan: 17

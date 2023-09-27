@@ -1,0 +1,88 @@
+{
+  "isp": {
+    "source": "./isp/",
+    "server": {
+      "address": "192.168.56.101",
+      "user": "root"
+    },
+    "replace": {
+      "MGMT_IP": "192.168.56.101",
+      "VLAN_ID": 7,
+      "DNS_SERVER": "1.1.1.1",
+      "PPPOE_USERNAME": "john@doe.com",
+      "PPPOE_PASSWORD": "123abc"
+    }
+  },
+  "client-guest-1": {
+    "source": "./client/",
+    "server": {
+      "address": "192.168.56.111",
+      "user": "root"
+    },
+    "replace": {
+      "MGMT_IP": "192.168.56.111",
+      "SUBNET_NAME": "guest",
+      "SUBNET_VLAN": "11"
+    }
+  },
+  "client-guest-2": {
+    "source": "./client/",
+    "server": {
+      "address": "192.168.56.112",
+      "user": "root"
+    },
+    "replace": {
+      "MGMT_IP": "192.168.56.112",
+      "SUBNET_NAME": "guest",
+      "SUBNET_VLAN": "11"
+    }
+  },
+  "client-iot-1": {
+    "source": "./client/",
+    "server": {
+      "address": "192.168.56.131",
+      "user": "root"
+    },
+    "replace": {
+      "MGMT_IP": "192.168.56.131",
+      "SUBNET_NAME": "iot",
+      "SUBNET_VLAN": "13"
+    }
+  },
+  "client-iot-2": {
+    "source": "./client/",
+    "server": {
+      "address": "192.168.56.132",
+      "user": "root"
+    },
+    "replace": {
+      "MGMT_IP": "192.168.56.132",
+      "SUBNET_NAME": "iot",
+      "SUBNET_VLAN": "13"
+    }
+  },
+  "client-main-1": {
+    "source": "./client/",
+    "server": {
+      "address": "192.168.56.171",
+      "user": "root"
+    },
+    "replace": {
+      "MGMT_IP": "192.168.56.171",
+      "SUBNET_NAME": "main",
+      "SUBNET_VLAN": "17"
+    }
+  },
+  "client-main-2": {
+    "source": "./client/",
+    "server": {
+      "address": "192.168.56.172",
+      "user": "root"
+    },
+    "replace": {
+      "MGMT_IP": "192.168.56.172",
+      "SUBNET_NAME": "main",
+      "SUBNET_VLAN": "17"
+    }
+  }
+}

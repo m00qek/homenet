@@ -1,0 +1,26 @@
+config interface 'loopback'
+        option device 'lo'
+        option proto 'static'
+        option ipaddr '127.0.0.1'
+        option netmask '255.0.0.0'
+
+config device
+        option name 'eth0'
+        option ipv6 '0'
+
+config interface 'mgmt'
+        option device 'eth0'
+        option proto 'static'
+        option ipaddr '{{MGMT_IP}}'
+        option netmask '255.255.255.0'
+
+config device
+        option name '{{SUBNET_NAME}}-vlan'
+        option type '8021q'
+        option ifname 'eth1'
+        option vid {{SUBNET_VLAN}}
+        option ipv6 '0'
+
+config interface 'wan'
+        option device '{{SUBNET_NAME}}-vlan'
+        option proto 'dhcp'

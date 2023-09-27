@@ -1,0 +1,9 @@
+require-chap
+login
+debug
+logfile /var/log/pppoe-server-log
+ms-dns {{DNS_SERVER}}
+lcp-echo-interval 10
+lcp-echo-failure 2
+mru 1492
+mtu 1492

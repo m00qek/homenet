@@ -1,0 +1,32 @@
+uci:
+  to-services:
+    dhcp:
+      - odhcpd
+      - dnsmasq
+  dependencies:
+    network:
+      - device-names
+    firewall:
+      - network
+    dhcp:
+      - network
+
+default-host: router
+
+hosts:
+  router:
+    source: ./router/
+    server:
+      addr: 111.111.111.111
+      user: root
+    params:
+      pppoe:
+        username: john@doe.com
+        password: 1111111
+      wireguard:
+        client-private-key: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+        client-public-key: BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB=
+        client-address: 111.111.111.111/32
+        server-public-key: CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC=
+        server-address: my.wireguard.server.com
+        server-port: 56789
