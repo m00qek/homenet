@@ -2,7 +2,7 @@ require-chap
 login
 debug
 logfile /var/log/pppoe-server-log
-ms-dns {{DNS_SERVER}}
+ms-dns {{ .params.dns.server_1 }}
 lcp-echo-interval 10
 lcp-echo-failure 2
 mru 1492

@@ -12,7 +12,7 @@ config device
 config interface 'mgmt'
 	option device 'eth0'
 	option proto 'static'
-	option ipaddr '{{MGMT_IP}}'
+	option ipaddr '{{ .server.addr }}'
 	option netmask '255.255.255.0'
 
 config device
@@ -31,7 +31,7 @@ config device
 	option name 'vlan'
 	option type '8021q'
 	option ifname 'eth2'
-	option vid '{{VLAN_ID}}'
+	option vid '{{ .params.vlan }}'
 	option ipv6 '0'
 
 config interface 'PPPoE'

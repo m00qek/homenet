@@ -2,8 +2,8 @@ config pppoe_server
        option interface PPPoE
        option ac_name isp
        option maxsessionsperpeer 0
-       option localip 10.0.{{VLAN_ID}}.1
-       option firstremoteip 10.0.{{VLAN_ID}}.100
+       option localip 10.0.{{ .params.vlan }}.1
+       option firstremoteip 10.0.{{ .params.vlan }}.100
        option maxsessions 64
        option optionsfile /etc/ppp/pppoe-server-options
        option randomsessions 1

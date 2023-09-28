@@ -24,9 +24,11 @@ hosts:
         username: john@doe.com
         password: 1111111
       wireguard:
-        client-private-key: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
-        client-public-key: BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB=
-        client-address: 111.111.111.111/32
-        server-public-key: CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC=
-        server-address: my.wireguard.server.com
-        server-port: 56789
+        client:
+          private_key: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+          public_key: BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB=
+          addr: 111.111.111.111/32
+        server:
+          public_key: CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC=
+          addr: my.wireguard.server.com
+          port: 56789

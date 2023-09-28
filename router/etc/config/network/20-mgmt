@@ -5,5 +5,5 @@ config device
 config interface 'mgmt'
 	option device 'eth-mgmt'
 	option proto 'static'
-	option ipaddr '192.168.56.105'
+	option ipaddr '{{ .server.addr }}'
 	option netmask '255.255.255.0'

@@ -16,7 +16,7 @@ hosts:
     params:
       vlan: 7
       dns:
-        server-1: 1.1.1.1
+        server_1: 1.1.1.1
       pppoe:
         username: john@doe.com
         password: 123abc

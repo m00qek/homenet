@@ -11,16 +11,16 @@ config device
 config interface 'mgmt'
         option device 'eth0'
         option proto 'static'
-        option ipaddr '{{MGMT_IP}}'
+        option ipaddr '{{ .server.addr }}'
         option netmask '255.255.255.0'
 
 config device
-        option name '{{SUBNET_NAME}}-vlan'
+        option name '{{ .params.subnet.name }}-vlan'
         option type '8021q'
         option ifname 'eth1'
-        option vid {{SUBNET_VLAN}}
+        option vid {{ .params.subnet.vlan }}
         option ipv6 '0'
 
 config interface 'wan'
-        option device '{{SUBNET_NAME}}-vlan'
+        option device '{{ .params.subnet.name }}-vlan'
         option proto 'dhcp'
