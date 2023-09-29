@@ -1,0 +1,34 @@
+#!/bin/sh /etc/rc.common
+
+START=11
+
+# don't run within buildroot
+[ -n "${IPKG_INSTROOT}" ] && return 0
+
+#use busybox grep as GNU grep may be set differently and break the script
+grep() {
+	/bin/busybox grep $@
+}
+
+#shutting down all interfaces, then assigning temporary name to free up interface names
+#bridges and virtual interfaces are already excluded by  /sys/class/net/*/device/uevent as only physical interfaces have that
+for i in $(ls /sys/class/net/*/device/uevent | awk -F'/' '{print $5}' | tr '\n' ' '); do
+	mac_address=$(grep "$i" /etc/config/device-names | awk '{print $3}' | tr -d '"')
+	if [ "$mac_address" != '' ]; then
+
+		ip link set "$i" down
+		ip link set "$i" name old"$i"
+
+	fi
+done
+
+for i in $(ls /sys/class/net/*/device/uevent | awk -F'/' '{print $5}' | tr '\n' ' '); do
+	mac_address=$(cat "/sys/class/net/$i/address")
+	interface_name=$(grep -i "$mac_address" /etc/config/device-names | awk '{print $2}')
+	if [ "$interface_name" != '' ]; then
+
+		ip link set "$i" down
+		ip link set "$i" name "$interface_name"
+
+	fi
+done

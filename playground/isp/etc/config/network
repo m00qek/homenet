@@ -6,31 +6,31 @@ config interface 'loopback'
 	option netmask '255.0.0.0'
 
 config device
-	option name 'eth0'
+	option name 'eth-mgmt'
 	option ipv6 '0'
 
 config interface 'mgmt'
-	option device 'eth0'
+	option device 'eth-mgmt'
 	option proto 'static'
 	option ipaddr '{{ .server.addr }}'
 	option netmask '255.255.255.0'
 
 config device
-	option name 'eth1'
+	option name 'eth-wan'
 	option ipv6 '0'
 
 config interface 'wan'
-	option device 'eth1'
+	option device 'eth-wan'
 	option proto 'dhcp'
 
 config device
-	option name 'eth2'
+	option name 'eth-lan'
 	option ipv6 '0'
 
 config device
 	option name 'vlan'
 	option type '8021q'
-	option ifname 'eth2'
+	option ifname 'eth-lan'
 	option vid '{{ .params.vlan }}'
 	option ipv6 '0'
 

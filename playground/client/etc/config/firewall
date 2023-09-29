@@ -1,0 +1,63 @@
+config defaults
+	option syn_flood 1
+	option input REJECT
+	option output ACCEPT
+	option forward REJECT
+
+config zone
+	option name mgmt
+	list network 'mgmt'
+	option input ACCEPT
+	option output ACCEPT
+	option forward ACCEPT
+
+config zone
+	option name wan
+	list network 'wan'
+	option input REJECT
+	option output ACCEPT
+	option forward REJECT
+	option masq 1
+	option mtu_fix 1
+
+config forwarding
+	option src mgmt
+	option dest wan
+
+config rule
+	option name Allow-DHCP-Renew
+	option src wan
+	option proto udp
+	option dest_port 68
+	option target ACCEPT
+	option family ipv4
+
+config rule
+	option name Allow-Ping
+	option src wan
+	option proto icmp
+	option icmp_type echo-request
+	option family ipv4
+	option target ACCEPT
+
+config rule
+	option name Allow-IGMP
+	option src wan
+	option proto igmp
+	option family ipv4
+	option target ACCEPT
+
+config rule
+	option name Allow-IPSec-ESP
+	option src wan
+	option dest mgmt
+	option proto esp
+	option target ACCEPT
+
+config rule
+	option name Allow-ISAKMP
+	option src wan
+	option dest mgmt
+	option dest_port 500
+	option proto udp
+	option target ACCEPT

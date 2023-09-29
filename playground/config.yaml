@@ -2,24 +2,50 @@ hosts:
   router:
     source: ../router/
     server:
-      addr: 192.168.56.105
+      addr: 192.168.56.101
     params:
       pppoe:
         username: john@doe.com
         password: 123abc
+      vm:
+        nic1: 
+          type: hostonly
+          macaddr: 08:00:27:10:01:01
+          network: vboxnet0
+        nic2: 
+          type: intnet
+          macaddr: 08:00:27:10:01:02
+          network: isp.lan
+        nic3: 
+          type: intnet
+          macaddr: 08:00:27:10:01:03
+          network: router.lan
 
   isp:
     source: ./isp/
     server:
-      addr: 192.168.56.101
+      addr: 192.168.56.71
       user: root
     params:
       vlan: 7
       dns:
         server_1: 1.1.1.1
+        server_2: 1.1.2.2
       pppoe:
         username: john@doe.com
         password: 123abc
+      vm:
+        nic1: 
+          type: hostonly
+          macaddr: 08:00:27:07:01:01
+          network: vboxnet0
+        nic2: 
+          type: nat
+          macaddr: 08:00:27:07:01:02
+        nic3: 
+          type: intnet
+          macaddr: 08:00:27:07:01:03
+          network: isp.lan
 
   client-guest-1:
     source: ./client/
@@ -30,6 +56,15 @@ hosts:
       subnet:
         name: guest
         vlan: 11
+      vm:
+        nic1: 
+          type: hostonly
+          macaddr: 08:00:27:11:01:01
+          network: vboxnet0
+        nic2: 
+          type: intnet
+          macaddr: 08:00:27:11:01:02
+          network: router.lan
 
   client-guest-2:
     source: ./client/
@@ -40,6 +75,15 @@ hosts:
       subnet:
         name: guest
         vlan: 11
+      vm:
+        nic1: 
+          type: hostonly
+          macaddr: 08:00:27:11:02:01
+          network: vboxnet0
+        nic2: 
+          type: intnet
+          macaddr: 08:00:27:11:02:02
+          network: router.lan
 
   client-iot-1:
     source: ./client/
@@ -50,6 +94,15 @@ hosts:
       subnet:
         name: iot
         vlan: 13
+      vm:
+        nic1: 
+          type: hostonly
+          macaddr: 08:00:27:13:01:01
+          network: vboxnet0
+        nic2: 
+          type: intnet
+          macaddr: 08:00:27:13:01:02
+          network: router.lan
 
   client-iot-2:
     source: ./client/
@@ -60,6 +113,15 @@ hosts:
       subnet:
         name: iot
         vlan: 13
+      vm:
+        nic1: 
+          type: hostonly
+          macaddr: 08:00:27:13:02:01
+          network: vboxnet0
+        nic2: 
+          type: intnet
+          macaddr: 08:00:27:13:02:02
+          network: router.lan
 
   client-main-1:
     source: ./client/
@@ -70,6 +132,15 @@ hosts:
       subnet:
         name: main
         vlan: 17
+      vm:
+        nic1: 
+          type: hostonly
+          macaddr: 08:00:27:17:01:01
+          network: vboxnet0
+        nic2: 
+          type: intnet
+          macaddr: 08:00:27:17:01:02
+          network: router.lan
 
   client-main-2:
     source: ./client/
@@ -80,3 +151,12 @@ hosts:
       subnet:
         name: main
         vlan: 17
+      vm:
+        nic1: 
+          type: hostonly
+          macaddr: 08:00:27:17:02:01
+          network: vboxnet0
+        nic2: 
+          type: intnet
+          macaddr: 08:00:27:17:02:02
+          network: router.lan
