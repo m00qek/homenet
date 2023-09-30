@@ -32,17 +32,17 @@ vboxmanage storageattach "$HOST" \
 	--storagectl 'IDE' --port 0 --device 0 --type hdd --medium "${VMDIR}/${HOST}/${HOST}.vdi"
 
 index=1
-while [ -n "$(play vaal --host="${HOST}" get ".params.vm.nic${index}")" ]; do
-	net_type=$(play vaal --host="${HOST}" get ".params.vm.nic${index}.type")
+while [ -n "$(play vaal --host="${HOST}" get ".params.hardware.nic${index}")" ]; do
+	net_type=$(play vaal --host="${HOST}" get ".params.hardware.nic${index}.type")
 
 	if [[ "$net_type" == "intnet" ]]; then
-		network="--intnet${index} $(play vaal --host="${HOST}" get ".params.vm.nic${index}.network")"
+		network="--intnet${index} $(play vaal --host="${HOST}" get ".params.hardware.nic${index}.network")"
 	elif [[ "$net_type" == "hostonly" ]]; then
-		network="--hostonlyadapter${index} $(play vaal --host="${HOST}" get ".params.vm.nic${index}.network")"
+		network="--hostonlyadapter${index} $(play vaal --host="${HOST}" get ".params.hardware.nic${index}.network")"
 	fi
 
 	nic="--nic${index} ${net_type}"
-	mac=$(play vaal --host="${HOST}" get ".params.vm.nic${index}.macaddr")
+	mac=$(play vaal --host="${HOST}" get ".params.hardware.nic${index}.macaddr")
 	if [ -n "$mac" ]; then
 		mac="--macaddress${index} ${mac//:/}"
 	fi

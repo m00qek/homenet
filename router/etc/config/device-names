@@ -1,4 +1,4 @@
 config device-names
-	option eth-lan "08:00:27:da:12:d0"
-	option eth-wan "08:00:27:40:c5:b4"
-	option eth-mgmt "08:00:27:12:69:68"
+	option eth-mgmt "{{ .params.hardware.nic1.macaddr }}"
+	option eth-wan  "{{ .params.hardware.nic2.macaddr }}"
+	option eth-lan  "{{ .params.hardware.nic3.macaddr }}"

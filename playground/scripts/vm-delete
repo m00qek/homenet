@@ -1,8 +1,28 @@
 #!/usr/bin/env bash
 set -euo pipefail
 BASEDIR="$(realpath "$(dirname "$0")")"
+VMDIR="$(dirname "${BASEDIR}")/.vms"
+
+play() {
+	"$(dirname "${BASEDIR}")/play" "$@"
+}
 
 HOST="$1"
 
-vboxmanage unregistervm --delete "$HOST"
-rm "${BASEDIR}/.vms/${HOST}.img"
+if vboxmanage list runningvms | cut -d'"' -f2 | grep -q "$HOST"; then
+	echo >&2 "ERROR: Cannot delete VM '${HOST}' because it is running."
+	echo >&2 "       Please stop it and try again."
+	exit 7
+fi
+
+if vboxmanage list vms | cut -d'"' -f2 | grep -q "$HOST"; then
+	vboxmanage unregistervm --delete "$HOST"
+fi
+
+rm "${VMDIR}/${HOST}.img" -f
+
+if [ -f "${HOME}/.ssh/known_hosts" ]; then
+	ssh-keygen \
+		-f "${HOME}/.ssh/known_hosts" \
+		-R "$(play vaal --host="${HOST}" get ".params.server.addr")"
+fi

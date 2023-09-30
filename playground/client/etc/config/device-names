@@ -1,3 +1,3 @@
 config device-names
-	option eth-mgmt "{{ .params.vm.nic1.macaddr }}"
-	option eth-lan  "{{ .params.vm.nic2.macaddr }}"
+	option eth-mgmt "{{ .params.hardware.nic1.macaddr }}"
+	option eth-lan  "{{ .params.hardware.nic2.macaddr }}"

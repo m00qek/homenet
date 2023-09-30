@@ -23,6 +23,11 @@ hosts:
       pppoe:
         username: john@doe.com
         password: 1111111
+      hardware:
+        nic1:
+          macaddr: 00:00:00:00:00:00
+        nic2:
+          macaddr: 00:00:00:00:00:00
       wireguard:
         client:
           private_key: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
