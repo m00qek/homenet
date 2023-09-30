@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+
+BASEDIR="$(realpath "$(dirname "$0")")"
+PARENTDIR="$(dirname "$BASEDIR")"
+
+usage() {
+	echo "./play build-image <hostname> <dest>"
+	echo "./play vm create <hostname>"
+	echo "./play vm create-all"
+	echo "./play vm delete <hostname>"
+	echo "./play vm delete-all"
+	echo "./play vaal ..."
+	exit 1
+}
+
+validate_host() {
+	[ -z "$1" ] && usage
+	hostnames="$(play_vaal list hosts | sort --reverse)"
+	if ! grep -q ^$1$ <<<"$hostnames"; then
+		echo >&2 "ERROR: Could not find hostname '$1' in config."
+		echo >&2 "Config files:"
+		echo >&2 "  ${PARENTDIR}/config.yaml"
+		echo >&2 "  ${PARENTDIR}/config.secrets.yaml"
+		echo >&2 "  ${BASEDIR}/config.yaml"
+		exit 2
+	fi
+}
+
+play_vaal() {
+	vaal \
+		--config "${PARENTDIR}/config.yaml" \
+		--config "${PARENTDIR}/config.secrets.yaml" \
+		--config "${BASEDIR}/config.yaml" \
+		"$@"
+}
+
+play_vm() {
+	case "$1" in
+	create-all)
+		hostnames="$(play_vaal list hosts | sort --reverse)"
+		for host in $hostnames; do "${BASEDIR}/scripts/vm-create" "$host"; done
+		;;
+	delete-all)
+		hostnames="$(play_vaal list hosts | sort --reverse)"
+		for host in $hostnames; do "${BASEDIR}/scripts/vm-delete" "$host"; done
+		;;
+	delete)
+		validate_host "$2"
+		"${BASEDIR}/scripts/vm-delete" "$2"
+		;;
+	create)
+		validate_host "$2"
+		"${BASEDIR}/scripts/vm-create" "$2"
+		;;
+	*)
+		usage
+		;;
+	esac
+}
+
+play_buildimage() {
+	validate_host "$1"
+	[ -z "$2" ] && usage
+	"${BASEDIR}/scripts/build-image" "$1" "$2"
+}
+
+case "$1" in
+vaal)
+	play_vaal "${@:2}"
+	;;
+
+vm)
+	play_vm "${@:2}"
+	;;
+
+build-image)
+	play_buildimage "${@:2}"
+	;;
+
+*)
+	usage
+	;;
+esac

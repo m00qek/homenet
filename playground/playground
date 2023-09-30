@@ -1,7 +1,0 @@
-#!/bin/sh
-
-vaal \
-	--config ../config.yaml \
-	--config ../config.secrets.yaml \
-	--config ./config.yaml \
-	$@

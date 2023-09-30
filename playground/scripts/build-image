@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
-
 set -euo pipefail
+BASEDIR="$(realpath "$(dirname "$0")")"
+
+play() {
+	"$(dirname "${BASEDIR}")/play" "$@"
+}
+
+HOST="$1"
+DESTDIR="$2"
 
 TEMPDIR="$(mktemp --directory)"
 trap 'rm -rf $TEMPDIR' EXIT
@@ -8,9 +15,7 @@ trap 'rm -rf $TEMPDIR' EXIT
 mkdir "${TEMPDIR}/bin"
 mkdir "${TEMPDIR}/custom-files"
 
-HOST="$1"
-
-./playvaal --host="$HOST" sync --to-directory="${TEMPDIR}/custom-files"
+play vaal --host="$HOST" sync --to-directory="${TEMPDIR}/custom-files"
 
 PACKAGES="wireguard-tools kmod-wireguard ip-full rp-pppoe-server"
 
@@ -23,6 +28,5 @@ docker run \
 	openwrt/imagebuilder \
 	make image PROFILE=generic PACKAGES="$PACKAGES" FILES=custom-files
 
-mkdir -p "./.vm"
 gzip -dk "${TEMPDIR}/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img.gz" || true
-cp "${TEMPDIR}/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img" ".vm/${HOST}.img"
+cp "${TEMPDIR}/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img" "${DESTDIR}/${HOST}.img"

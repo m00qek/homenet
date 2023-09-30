@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+BASEDIR="$(realpath "$(dirname "$0")")"
+
+HOST="$1"
+
+vboxmanage unregistervm --delete "$HOST"
+rm "${BASEDIR}/.vms/${HOST}.img"

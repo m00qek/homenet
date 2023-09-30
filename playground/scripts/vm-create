@@ -1,16 +1,19 @@
 #!/usr/bin/env bash
-
 set -euo pipefail
-
-VMDIR="$(realpath ./.vm)"
+BASEDIR="$(realpath "$(dirname "$0")")"
+VMDIR="$(dirname "${BASEDIR}")/.vms"
 mkdir -p "$VMDIR"
 
 HOST="$1"
 
+play() {
+	"$(dirname "${BASEDIR}")/play" "$@"
+}
+
 BASE_IMAGE="${VMDIR}/${HOST}.img"
 
 if ! [ -f "$BASE_IMAGE" ]; then
-	./image "$HOST"
+	play build-image "$HOST" "${VMDIR}"
 fi
 
 vboxmanage createvm \
@@ -29,17 +32,17 @@ vboxmanage storageattach "$HOST" \
 	--storagectl 'IDE' --port 0 --device 0 --type hdd --medium "${VMDIR}/${HOST}/${HOST}.vdi"
 
 index=1
-while [ -n "$(./playvaal --host="${HOST}" get ".params.vm.nic${index}")" ]; do
-	net_type=$(./playvaal --host="${HOST}" get ".params.vm.nic${index}.type")
+while [ -n "$(play vaal --host="${HOST}" get ".params.vm.nic${index}")" ]; do
+	net_type=$(play vaal --host="${HOST}" get ".params.vm.nic${index}.type")
 
 	if [[ "$net_type" == "intnet" ]]; then
-		network="--intnet${index} $(./playvaal --host="${HOST}" get ".params.vm.nic${index}.network")"
+		network="--intnet${index} $(play vaal --host="${HOST}" get ".params.vm.nic${index}.network")"
 	elif [[ "$net_type" == "hostonly" ]]; then
-		network="--hostonlyadapter${index} $(./playvaal --host="${HOST}" get ".params.vm.nic${index}.network")"
+		network="--hostonlyadapter${index} $(play vaal --host="${HOST}" get ".params.vm.nic${index}.network")"
 	fi
 
 	nic="--nic${index} ${net_type}"
-	mac=$(./playvaal --host="${HOST}" get ".params.vm.nic${index}.macaddr")
+	mac=$(play vaal --host="${HOST}" get ".params.vm.nic${index}.macaddr")
 	if [ -n "$mac" ]; then
 		mac="--macaddress${index} ${mac//:/}"
 	fi
