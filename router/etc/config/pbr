@@ -1,0 +1,16 @@
+config pbr 'config'
+	option enabled '1'
+	option verbosity '2'
+	option strict_enforcement '1'
+	option resolver_set 'none'
+	option ipv6_enabled '0'
+	option boot_timeout '30'
+	option rule_create_option 'add'
+	option procd_reload_delay '1'
+	option webui_show_ignore_target '0'
+
+config policy
+	option name 'guest-to-vpn'
+	option src_addr '10.0.11.0/24'
+	option dest_addr '!10.0.0.0/16'
+	option interface 'vpn'

@@ -17,7 +17,7 @@ mkdir "${TEMPDIR}/custom-files"
 
 play vaal --host="$HOST" sync --to-directory="${TEMPDIR}/custom-files"
 
-PACKAGES="wireguard-tools kmod-wireguard ip-full rp-pppoe-server"
+PACKAGES="wireguard-tools kmod-wireguard ip-full rp-pppoe-server pbr"
 
 docker run \
 	--rm \
