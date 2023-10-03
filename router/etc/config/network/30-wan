@@ -7,7 +7,6 @@ config device
 
 config interface 'wan'
 	option device 'vlan-wan'
-#	option proto 'dhcp'
 	option proto 'pppoe'
 	option username '{{ .params.pppoe.username }}'
 	option password '{{ .params.pppoe.password }}'

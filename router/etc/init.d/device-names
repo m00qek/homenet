@@ -1,5 +1,8 @@
 #!/bin/sh /etc/rc.common
 
+# This service was proposed by user @bobafetthotmail on OpenWRT Forums
+# https://forum.openwrt.org/t/how-does-openwrt-ensure-network-device-names-are-consistent/90185/6
+
 START=11
 
 # don't run within buildroot
