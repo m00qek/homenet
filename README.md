@@ -56,7 +56,7 @@ necessary, VirtualBox subnet addresses (192.168.56.*) and network device
 
 To first create all hosts and network run
 ```bash
-playground/play vm create-all
+playground/play vm create --all
 ```
 
 You'll need VirtualBox, bash and docker installed on you computer. Beware that
