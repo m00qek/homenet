@@ -4,23 +4,17 @@ BASEDIR="$(realpath "$(dirname "$0")")"
 PARENTDIR="$(dirname "$BASEDIR")"
 
 usage() {
-	echo "./play build-image <hostname> <dest>"
-	echo "./play vm create <hostname>"
-	echo "./play vm create-all"
-	echo "./play vm delete <hostname>"
-	echo "./play vm delete-all"
-	echo "./play vm start <hostname>"
-	echo "./play vm start-all"
-	echo "./play vm stop <hostname>"
-	echo "./play vm stop-all"
+	echo "./play vm (delete | create | start | stop) <hostname>..."
+	echo "./play vm (delete | create | start | stop) --all"
+	echo "./play image build <hostname> <destdir>"
 	echo "./play vaal ..."
 	exit 1
 }
 
 validate_host() {
 	[ -z "$1" ] && usage
-	hostnames="$(play_vaal list hosts | sort --reverse)"
-	if ! grep -q "^$1$" <<<"$hostnames"; then
+
+	if ! play_vaal list hosts | grep -q "^$1$"; then
 		echo >&2 "ERROR: Could not find hostname '$1' in config."
 		echo >&2 "       Config files:"
 		echo >&2 "         ${PARENTDIR}/config.yaml"
@@ -28,6 +22,23 @@ validate_host() {
 		echo >&2 "         ${BASEDIR}/config.yaml"
 		exit 2
 	fi
+}
+
+run_vm_script() {
+	local -r script="$1"
+
+	local -a hostnames=("${@:2}")
+	if [[ "$2" == '--all' ]]; then
+		readarray -t hostnames <<<"$(play_vaal list hosts | sort --reverse)"
+	fi
+
+	for host in "${hostnames[@]}"; do
+		validate_host "$host"
+	done
+
+	for host in "${hostnames[@]}"; do
+		"$script" "$host"
+	done
 }
 
 play_vaal() {
@@ -39,49 +50,37 @@ play_vaal() {
 }
 
 play_vm() {
-	case "$1" in
-	create-all)
-		hostnames="$(play_vaal list hosts | sort --reverse)"
-		for host in $hostnames; do "${BASEDIR}/scripts/vm-create" "$host"; done
+	local -r command="$1"
+
+	case "$command" in
+	delete | create | start | stop)
+		run_vm_script "${BASEDIR}/scripts/vm-${command}" "${@:2}"
 		;;
-	delete-all)
-		hostnames="$(play_vaal list hosts | sort --reverse)"
-		for host in $hostnames; do "${BASEDIR}/scripts/vm-delete" "$host"; done
-		;;
-	start-all)
-		hostnames="$(play_vaal list hosts | sort --reverse)"
-		for host in $hostnames; do vboxmanage startvm "$host" --type headless; done
-		;;
-	stop-all)
-		hostnames="$(play_vaal list hosts | sort --reverse)"
-		for host in $hostnames; do vboxmanage controlvm "$host" acpipowerbutton; done
-		;;
-	delete)
-		validate_host "$2"
-		"${BASEDIR}/scripts/vm-delete" "$2"
-		;;
-	create)
-		validate_host "$2"
-		"${BASEDIR}/scripts/vm-create" "$2"
-		;;
-	start)
-		validate_host "$2"
-		vboxmanage startvm "$2" --type headless
-		;;
-	stop)
-		validate_host "$2"
-		vboxmanage controlvm "$2" acpipowerbutton
-		;;
+
 	*)
 		usage
 		;;
 	esac
 }
 
-play_buildimage() {
-	validate_host "$1"
-	[ -z "$2" ] && usage
-	"${BASEDIR}/scripts/build-image" "$1" "$2"
+play_image() {
+	local -r command="$1"
+
+	case "$command" in
+	build)
+		local -r host="$2"
+		validate_host "$host"
+
+		local -r destdir="$3"
+		[ -z "$destdir" ] && usage
+
+		"${BASEDIR}/scripts/image-build" "$host" "$destdir"
+		;;
+
+	*)
+		usage
+		;;
+	esac
 }
 
 case "$1" in
@@ -93,8 +92,8 @@ vm)
 	play_vm "${@:2}"
 	;;
 
-build-image)
-	play_buildimage "${@:2}"
+image)
+	play_image "${@:2}"
 	;;
 
 *)

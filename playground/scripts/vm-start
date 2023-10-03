@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+HOST="$1"
+
+vboxmanage startvm "$HOST" --type headless

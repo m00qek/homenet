@@ -7,6 +7,8 @@ hosts:
       pppoe:
         username: john@doe.com
         password: 123abc
+      openwrt:
+        packages: ip-full pbr wireguard-tools kmod-wireguard sqm-scripts
       hardware:
         nic1:
           macaddr: 08:00:27:10:01:01
@@ -34,6 +36,8 @@ hosts:
       pppoe:
         username: john@doe.com
         password: 123abc
+      openwrt:
+        packages: ip-full rp-pppoe-server
       hardware:
         nic1:
           macaddr: 08:00:27:07:01:01
@@ -56,6 +60,8 @@ hosts:
       subnet:
         name: guest
         vlan: 11
+      openwrt:
+        packages: ip-full
       hardware:
         nic1:
           macaddr: 08:00:27:11:01:01
@@ -75,6 +81,8 @@ hosts:
       subnet:
         name: guest
         vlan: 11
+      openwrt:
+        packages: ip-full
       hardware:
         nic1:
           macaddr: 08:00:27:11:02:01
@@ -94,6 +102,8 @@ hosts:
       subnet:
         name: iot
         vlan: 13
+      openwrt:
+        packages: ip-full
       hardware:
         nic1:
           macaddr: 08:00:27:13:01:01
@@ -113,6 +123,8 @@ hosts:
       subnet:
         name: iot
         vlan: 13
+      openwrt:
+        packages: ip-full
       hardware:
         nic1:
           macaddr: 08:00:27:13:02:01
@@ -132,6 +144,8 @@ hosts:
       subnet:
         name: main
         vlan: 17
+      openwrt:
+        packages: ip-full
       hardware:
         nic1:
           macaddr: 08:00:27:17:01:01
@@ -151,6 +165,8 @@ hosts:
       subnet:
         name: main
         vlan: 17
+      openwrt:
+        packages: ip-full
       hardware:
         nic1:
           macaddr: 08:00:27:17:02:01

@@ -17,7 +17,14 @@ mkdir "${TEMPDIR}/custom-files"
 
 play vaal --host="$HOST" sync --to-directory="${TEMPDIR}/custom-files"
 
-PACKAGES="wireguard-tools kmod-wireguard ip-full rp-pppoe-server pbr"
+PACKAGES="$(play vaal --host="$HOST" get .params.openwrt.packages)"
+
+logfile="${DESTDIR}/${HOST}.image-build.log"
+
+echo "Building OpenWRT image for '${HOST}':"
+echo "  PACKAGES: ${PACKAGES}"
+echo
+echo "This might take a while..."
 
 docker run \
 	--rm \
@@ -26,7 +33,8 @@ docker run \
 	--interactive \
 	--tty \
 	openwrt/imagebuilder \
-	make image PROFILE=generic PACKAGES="$PACKAGES" FILES=custom-files
+	make image PROFILE=generic PACKAGES="$PACKAGES" FILES=custom-files \
+	>"$logfile"
 
-gzip -dk "${TEMPDIR}/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img.gz" || true
+gzip -dk "${TEMPDIR}/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img.gz" >>"$logfile" || true
 cp "${TEMPDIR}/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img" "${DESTDIR}/${HOST}.img"

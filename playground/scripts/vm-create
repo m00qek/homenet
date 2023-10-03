@@ -13,23 +13,28 @@ play() {
 BASE_IMAGE="${VMDIR}/${HOST}.img"
 
 if ! [ -f "$BASE_IMAGE" ]; then
-	play build-image "$HOST" "${VMDIR}"
+	play image build "$HOST" "${VMDIR}"
 fi
 
-vboxmanage createvm \
-	--name "$HOST" --ostype Linux_x64 --basefolder "${VMDIR}" --register
+logfile="${VMDIR}/${HOST}.vm-create.log"
+touch "$logfile"
 
-vboxmanage modifyvm "$HOST" \
-	--cpus 1 --memory 128 --vram 4 --boot1 disk --audio-driver none
+{
+	vboxmanage createvm \
+		--name "$HOST" --ostype Linux_x64 --basefolder "${VMDIR}" --register
 
-vboxmanage convertfromraw \
-	--format VDI "$BASE_IMAGE" "${VMDIR}/${HOST}/${HOST}.vdi"
+	vboxmanage modifyvm "$HOST" \
+		--cpus 1 --memory 128 --vram 4 --boot1 disk --audio-driver none
 
-vboxmanage storagectl "$HOST" \
-	--name 'IDE' --add ide
+	vboxmanage convertfromraw \
+		--format VDI "$BASE_IMAGE" "${VMDIR}/${HOST}/${HOST}.vdi"
 
-vboxmanage storageattach "$HOST" \
-	--storagectl 'IDE' --port 0 --device 0 --type hdd --medium "${VMDIR}/${HOST}/${HOST}.vdi"
+	vboxmanage storagectl "$HOST" \
+		--name 'IDE' --add ide
+
+	vboxmanage storageattach "$HOST" \
+		--storagectl 'IDE' --port 0 --device 0 --type hdd --medium "${VMDIR}/${HOST}/${HOST}.vdi"
+} >>"$logfile"
 
 index=1
 while [ -n "$(play vaal --host="${HOST}" get ".params.hardware.nic${index}")" ]; do
@@ -47,7 +52,9 @@ while [ -n "$(play vaal --host="${HOST}" get ".params.hardware.nic${index}")" ];
 		mac="--macaddress${index} ${mac//:/}"
 	fi
 
-	vboxmanage modifyvm "${HOST}" $nic $network $mac
+	vboxmanage modifyvm "${HOST}" $nic $network $mac >>"$logfile"
 
 	((index = index + 1))
 done
+
+echo
